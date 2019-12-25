@@ -3,9 +3,6 @@
 #include <Windows.h>
 #include <math.h>
 
-void gotoxy(int x, int y);
-int hu(float input);
-
 #define TRUE  1
 #define FALSE 0
 
@@ -25,6 +22,9 @@ float playerX = MAP_WIDTH / 2;
 float playerY = MAP_HEIGHT - 3;
 
 float playerSpeed = 5;
+
+void gotoxy(int x, int y);
+int hu(float input);
 
 void Init()
 {
@@ -154,10 +154,10 @@ int main()
 		if (term < 33)
 			continue;
 
+		previousTime = clock();
+
 		Update(term);
 		Render();
-
-		previousTime = clock();
 	}
 
 	Release();
