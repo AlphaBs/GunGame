@@ -6,14 +6,16 @@
 #define TRUE  1
 #define FALSE 0
 
+#define FPS 30
+
 #define MAP_WIDTH  30
-#define MAP_HEIGHT 20
+#define MAP_HEIGHT 30
 
 #define ENEMY_MOVE_TERM 100
-
 #define SPEED_CORRECTION_VALUE 0.01f
 
 int playing = TRUE;
+int score = 0;
 
 int enemyCreateTerm;
 int enemy[MAP_WIDTH][MAP_HEIGHT];
@@ -68,6 +70,7 @@ void Update(int term)
 			enemy[x][0] = rand() % 2;
 		}
 
+		score += 100;
 		lastCreateTime = 0;
 	}
 	else if (lastMoveTime > ENEMY_MOVE_TERM) // move enemy
@@ -99,6 +102,8 @@ void Update(int term)
 void Render()
 {
 	gotoxy(0, 0);
+	int px = hu(playerX);
+	int py = hu(playerY);
 
 	for (int y = 0; y < MAP_HEIGHT; y++)
 	{
@@ -116,7 +121,7 @@ void Render()
 			{
 				printf("V");
 			}
-			else if (hu(playerX) == x && hu(playerY) == y) // player
+			else if (px == x && py == y) // player
 			{
 				printf("#");
 			}
@@ -125,11 +130,12 @@ void Render()
 				printf(" ");
 			}
 		}
-
+		
 		printf("\n");
 	}
 
-	printf("%f, %f", playerX, playerY);
+	printf("%d, %d              \n", px, py);
+	printf("score : %d          \n", score);
 
 	if (!playing)
 	{
@@ -146,12 +152,14 @@ void Release()
 int main()
 {
 	Init();
+
 	int previousTime = clock();
+	int frameTerm = 1000 / FPS;
 
 	while (playing)
 	{
 		int term = clock() - previousTime;
-		if (term < 33)
+		if (term < frameTerm)
 			continue;
 
 		previousTime = clock();
