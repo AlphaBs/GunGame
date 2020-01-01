@@ -30,6 +30,18 @@ int hu(float input);
 
 void Init()
 {
+	HANDLE wHnd = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	// Set console size
+	SMALL_RECT windowSize = { 0, 0, MAP_WIDTH + 10, MAP_HEIGHT + 10 };
+	SetConsoleWindowInfo(wHnd, 1, &windowSize);
+
+	// Hide console cursor
+	CONSOLE_CURSOR_INFO info;
+	info.dwSize = 100;
+	info.bVisible = FALSE;
+	SetConsoleCursorInfo(wHnd, &info);
+
 	enemyCreateTerm = (MAP_HEIGHT - 2) * ENEMY_MOVE_TERM;
 
 	// initialize enemy array
@@ -40,6 +52,9 @@ void Init()
 			enemy[x][y] = 0;
 		}
 	}
+
+	printf("\n ===== GUN GAME =====\n");
+	system("pause");
 }
 
 int lastCreateTime  = 0;
@@ -50,9 +65,9 @@ void Update(int term)
 	float tempX = playerX;
 	int xDirection = 0;
 
-	if (GetAsyncKeyState(VK_LEFT) & 0x8001) // 왼쪽
+	if (GetAsyncKeyState(VK_LEFT) & 0x8001) // 왼쪽 계속
 		xDirection = -1;
-	else if (GetAsyncKeyState(VK_RIGHT) & 0x8001) // 오른쪽
+	else if (GetAsyncKeyState(VK_RIGHT) & 0x8001) // 오른쪽 계속
 		xDirection = 1;
 
 	tempX += term * playerSpeed * SPEED_CORRECTION_VALUE * xDirection;
@@ -67,10 +82,13 @@ void Update(int term)
 	{
 		for (int x = 1; x < MAP_WIDTH - 1; x++) // 1 ~ 18
 		{
-			enemy[x][0] = rand() % 2;
+			int hasEnemy = rand() % 2;
+			enemy[x][0] = hasEnemy;
+
+			if (hasEnemy)
+				score += 10;
 		}
 
-		score += 100;
 		lastCreateTime = 0;
 	}
 	else if (lastMoveTime > ENEMY_MOVE_TERM) // move enemy
@@ -107,6 +125,8 @@ void Render()
 
 	for (int y = 0; y < MAP_HEIGHT; y++)
 	{
+		printf("     ");
+
 		for (int x = 0; x < MAP_WIDTH; x++)
 		{
 			if (x == 0 || x == MAP_WIDTH - 1) // wall
@@ -123,7 +143,7 @@ void Render()
 			}
 			else if (px == x && py == y) // player
 			{
-				printf("#");
+				printf("A");
 			}
 			else // air
 			{
@@ -139,7 +159,7 @@ void Render()
 
 	if (!playing)
 	{
-		printf("\n\n ================= GAME OVER ================ \n\n");
+		printf("\n\n ===== GAME OVER ===== \n\n");
 	}
 }
 
