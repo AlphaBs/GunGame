@@ -42,7 +42,7 @@ void Init()
 	info.bVisible = FALSE;
 	SetConsoleCursorInfo(wHnd, &info);
 
-	enemyCreateTerm = (MAP_HEIGHT - 2) * ENEMY_MOVE_TERM;
+	enemyCreateTerm = (MAP_HEIGHT - 1) * ENEMY_MOVE_TERM;
 
 	// initialize enemy array
 	for (int y = 0; y < MAP_HEIGHT; y++)
@@ -63,16 +63,30 @@ int lastMoveTime    = 0;
 void Update(int term)
 {
 	float tempX = playerX;
+	float tempY = playerY;
 	int xDirection = 0;
+	int yDirection = 0;
 
 	if (GetAsyncKeyState(VK_LEFT) & 0x8001) // 왼쪽 계속
 		xDirection = -1;
 	else if (GetAsyncKeyState(VK_RIGHT) & 0x8001) // 오른쪽 계속
 		xDirection = 1;
 
-	tempX += term * playerSpeed * SPEED_CORRECTION_VALUE * xDirection;
+	if (GetAsyncKeyState(VK_UP) & 0x8001)
+		yDirection = -1;
+	else if (GetAsyncKeyState(VK_DOWN) & 0x8001)
+		yDirection = 1;
+
+	float moveDis = term * SPEED_CORRECTION_VALUE * playerSpeed;
+
+	tempX += xDirection * moveDis;
+	tempY += yDirection * moveDis;
+
 	if (tempX >= 1 && tempX <= MAP_WIDTH - 1)
 		playerX = tempX;
+
+	if (tempY >= 1 && tempY <= MAP_HEIGHT - 1)
+		playerY = tempY;
 
 
 	lastCreateTime += term;
@@ -119,6 +133,12 @@ void Update(int term)
 
 void Render()
 {
+	if (!playing)
+	{
+		printf("\n\n ===== GAME OVER ===== \n\n");
+		return;
+	}
+
 	gotoxy(0, 0);
 	int px = hu(playerX);
 	int py = hu(playerY);
@@ -156,11 +176,6 @@ void Render()
 
 	printf("%d, %d              \n", px, py);
 	printf("score : %d          \n", score);
-
-	if (!playing)
-	{
-		printf("\n\n ===== GAME OVER ===== \n\n");
-	}
 }
 
 void Release()
