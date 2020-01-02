@@ -23,7 +23,7 @@ int enemy[MAP_WIDTH][MAP_HEIGHT];
 float playerX = MAP_WIDTH / 2;
 float playerY = MAP_HEIGHT - 3;
 
-float playerSpeed = 5;
+float playerSpeed = 3;
 
 void gotoxy(int x, int y);
 int hu(float input);
