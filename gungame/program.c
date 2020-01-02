@@ -71,7 +71,7 @@ void Update(int term)
 		xDirection = 1;
 
 	tempX += term * playerSpeed * SPEED_CORRECTION_VALUE * xDirection;
-	if (!(tempX < 1 || tempX > MAP_WIDTH - 1))
+	if (tempX >= 1 && tempX <= MAP_WIDTH - 1)
 		playerX = tempX;
 
 
@@ -199,6 +199,6 @@ void gotoxy(int x, int y)
 
 int hu(float input)
 {
-	return floor(input + 0.5);
+	return floor(input);
 }
 
